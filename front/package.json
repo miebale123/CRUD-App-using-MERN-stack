@@ -7,7 +7,8 @@
     "**/*": "prettier --write --ignore-unknown"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "BROWSER=firefox vite",
+    "dev:firefox": "./dev-firefox.sh",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -16,6 +17,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.10.0",
+    "gsap": "^3.13.0",
     "json-server": "^1.0.0-beta.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

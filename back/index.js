@@ -1,86 +1,69 @@
-// const express = require("express");
-// const { MongoClient, ObjectId } = require("mongodb");
-// const cors = require("cors");
-
-// const app = express();
-// const PORT = 3001;
-// const client = new MongoClient("mongodb://localhost:27017");
-// let db;
-
-// client.connect().then(() => {
-//   db = client.db("mydb");
-//   console.log("✅ Connected to MongoDB");
-// });
-
-// app.use(cors());
-// app.use(express.json());
-
-// // 🟢 Create
-// app.post("/courses", async (req, res) => {
-//   const { title } = req.body;
-//   const result = await db.collection("courses").insertOne({ title });
-//   res.status(201).json(result);
-// });
-
-// // 🔵 Read
-// app.get("/courses", async (req, res) => {
-//   const courses = await db.collection("courses").find().toArray();
-//   res.json(courses);
-// });
-
-// // 🟡 Update
-// app.put("/courses/:id", async (req, res) => {
-//   const { id } = req.params;
-//   const { title } = req.body;
-//   await db
-//     .collection("courses")
-//     .updateOne({ _id: new ObjectId(id) }, { $set: { title } });
-//   res.json({ message: "Task updated" });
-// });
-
-// // 🔴 Delete
-// app.delete("/courses/:id", async (req, res) => {
-//   const { id } = req.params;
-//   await db.collection("courses").deleteOne({ _id: new ObjectId(id) });
-//   res.json({ message: "Task deleted" });
-// });
-
-// app.listen(PORT, () =>
-//   console.log(`🚀 Server running at http://localhost:${PORT}`)
-// );
-
-
 const express = require("express");
-const { MongoClient } = require("mongodb");
-const cors = require("cors");
+const jwt = require("jsonwebtoken");
 
 const app = express();
-const PORT = 3001;
-const client = new MongoClient("mongodb://localhost:27017");
-let db;
-
-// Connect to DB
-// client.connect().then(() => {
-//   db = client.db("mydb");
-//   console.log("✅ MongoDB connected");
-// });
-
-app.use(cors());
 app.use(express.json());
 
-// Create new task
-// app.post("/tasks", async (req, res) => {
-//   const { title } = req.body;
-//   const result = await db.collection("tasks").insertOne({ title });
-//   res.status(201).json(result);
+// Secret used to sign JWTs
+const SECRET = "yourSecretKey";
+
+// Dummy users
+const users = [
+  { id: 1, name: "userOne" },
+  { id: 2, name: "userTwo" },
+];
+
+// Login: Accepts username and returns a token
+// app.post("/login", (req, res) => {
+//   // const { username } = req.body;
+
+//   // Find user (no password check, simplified)
+//   // const user = users.find((u) => u.name === username);
+
+//   // if (!user) return res.send("User not found");
+
+//   // Create JWT with user id and name
+
+//   const token = jwt.sign({ id: 1, name: "userOne" }, SECRET);
+//   res.json({ token });
 // });
 
-// Read all tasks
-// app.get("/tasks", async (req, res) => {
-//   const tasks = await db.collection("tasks").find().toArray();
-//   res.json(tasks);
+// // Protected route: Only accessible with valid JWT
+// app.get("/protected", (req, res) => {
+//   const authHeader = req.headers.authorization;
+
+//   // Expect header like: Authorization: Bearer <token>
+//   const token = authHeader && authHeader.split(" ")[1];
+
+//   // if (!token) return res.send("Token missing");
+
+//   // Verify token
+//   const decoded = jwt.verify(token, SECRET);
+
+//   // Send decoded info
+//   res.json({ message: "Access granted", user: decoded });
 // });
 
-app.listen(PORT, () =>
-  console.log(`🚀 Server running on http://localhost:${PORT}`)
-);
+app.post("/createUser", (req, res) => {});
+
+app.post("/register", (req, res) => { });
+
+app.post("/login", (req, res) => {
+  const token = jwt.sign({ id: 1, username: "userOne" }, SECRET);
+  res.send(token);
+});
+
+
+app.get("/protected", (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  const token = authHeader.split(" ")[1];
+
+  const decoded = jwt.verify(token, SECRET);
+
+  res.send(decoded);
+});
+
+app.listen(5000, () => {
+  console.log("Server running on http://localhost:5000");
+});
